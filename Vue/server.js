@@ -18,9 +18,21 @@ app.get("/", (req, res) => {
     res.send("App de tareas en tiempo real con socket.io")
 })
 
+let misTareas = [
+    {nombre: "Tarea 1", estado: false},
+    {nombre: "Tarea 2", estado: true},
+    {nombre: "Tarea 3", estado: false}
+]
+
 io.on("connection", (socket) => {
-    console.log("User connected");
-    io.emit("Bienvenido", {"mensaje":"Bienvenido a las tareas alguien se conecto"})
+    console.log("User connected " + socket.id);
+    
+    socket.emit("tareas-evento", misTareas)
+    
+    socket.on("agregar-tarea", (data) => {
+        misTareas.push(data)
+        io.emit("tareas-evento", misTareas)
+    })
 })
 
 
