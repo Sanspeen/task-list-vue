@@ -19,9 +19,9 @@ app.get("/", (req, res) => {
 })
 
 let misTareas = [
-    {nombre: "Tarea 1", estado: false},
-    {nombre: "Tarea 2", estado: true},
-    {nombre: "Tarea 3", estado: false}
+    {id: 1,nombre: "Tarea 1", estado: false},
+    {id: 2,nombre: "Tarea 2", estado: true},
+    {id: 3,nombre: "Tarea 3", estado: false}
 ]
 
 io.on("connection", (socket) => {
@@ -31,6 +31,13 @@ io.on("connection", (socket) => {
     
     socket.on("agregar-tarea", (data) => {
         misTareas.push(data)
+        io.emit("tareas-evento", misTareas)
+    })
+
+    socket.on("actualizar-tarea", (data) => {
+        let indexTarea = misTareas.findIndex( x => x.id === data.id)
+        misTareas.splice(indexTarea, 1, data)
+        console.log(data);
         io.emit("tareas-evento", misTareas)
     })
 })
